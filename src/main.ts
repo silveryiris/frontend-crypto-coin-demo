@@ -12,12 +12,16 @@ app.use(createPinia())
 app.use(router)
 
 // dev mock api server
-if (import.meta.env.DEV === true) {
-  import("@/mocks/cryptocompare/browser").then((module) => {
+const prepare = async () => {
+  if (import.meta.env.DEV === true) {
+    const module = await import("@/mocks/cryptocompare/browser")
+
     const { worker } = module
 
-    worker.start({ onUnhandledRequest: "bypass" })
-  })
+    return worker.start({ onUnhandledRequest: "bypass" })
+  }
+
+  return Promise.resolve()
 }
 
-app.mount("#app")
+prepare().then(() => app.mount("#app"))
