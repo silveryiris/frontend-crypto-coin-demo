@@ -1,29 +1,32 @@
 <template>
-  <main>
+  <div class="container mx-auto">
+    <button @click="fetchData" class="p-4">click API</button>
+    <button @click="fetchData2" class="p-4">click API 2</button>
+
     <div>
-      <button @click="fetchData" class="p-4">click API</button>
-      <button @click="fetchData2" class="p-4">click API 2</button>
-      <div>API {{ data }}</div>
+      <h1>API {{ data }}</h1>
     </div>
-  </main>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useFetch } from "@vueuse/core"
 import { ref } from "vue"
+import { useCryptoCompareStore } from "@/stores/cryptoCompare"
 
-const apiUrl = import.meta.env.VITE_CRYPTOCOMPARE_API_URL
-const endpoint = ref("")
+const ccStore = useCryptoCompareStore()
+const data = ref()
 
-const { data, execute } = useFetch(endpoint, { immediate: false, refetch: true })
+await ccStore.fetchMultipleSymbolsPrice({ fsyms: "" })
 
-const fetchData = () => {
-  endpoint.value = `${apiUrl}/pricemulti`
-  execute()
+const fetchData = async () => {
+  const result = await ccStore.fetchMultipleSymbolsPrice({ fsyms: "" })
+
+  data.value = result.value
 }
 
-const fetchData2 = () => {
-  endpoint.value = `${apiUrl}/top/totaltoptiervolfull`
-  execute()
+const fetchData2 = async () => {
+  const result = await ccStore.fetchTotalTopTierVolFull({})
+
+  data.value = result.value
 }
 </script>
