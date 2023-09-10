@@ -16,7 +16,7 @@
         </tr>
       </thead>
       <tbody>
-        <template v-for="x in ccStore.topList" :key="x">
+        <template v-for="x in rows" :key="x">
           <tr class="text-right text-primary-content">
             <th class="text-left">
               <div class="mr-4 flex items-center">
@@ -51,8 +51,15 @@
 </template>
 
 <script setup lang="ts">
+import { toRefs } from "vue"
+import type { PropType } from "vue"
 import { useCryptoCompareStore } from "@/stores/cryptoCompare"
+import type { TotalTopTierVolFullResponseData } from "@/stores/cryptoCompare.d"
 import BadgeNumberNotice from "@/components/BadgeNumberNotice.vue"
+
+const props = defineProps({ rows: { type: Array as PropType<TotalTopTierVolFullResponseData[]> } })
+
+const { rows } = toRefs(props)
 
 const ccStore = useCryptoCompareStore()
 
@@ -64,6 +71,4 @@ const tableHeaders = [
   { label: "24h最低" },
   { label: "24h成交量(USDT)" },
 ]
-
-await ccStore.fetchTotalTopTierVolFull({})
 </script>

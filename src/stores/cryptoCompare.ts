@@ -1,13 +1,19 @@
-import { ref } from "vue"
+import { ref, computed } from "vue"
 import { defineStore } from "pinia"
 import { createFetch } from "@vueuse/core"
+import type {
+  TotalTopTierVolFullResponseData,
+  MultipleSymbolsPriceParams,
+  TotalTopTierVolFullParams,
+  TotalTopTierVolFullResponse,
+} from "./cryptoCompare.d"
 
 export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
   const apiUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_URL)
   const apiKey = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_KEY)
   const ccUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_URL)
 
-  const topList = ref<TotalTopTierVolFullResponseData[]>()
+  const topList = ref<TotalTopTierVolFullResponseData[]>([])
 
   const apiFetch = createFetch({
     baseUrl: apiUrl.value,
@@ -58,56 +64,48 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
     return data
   }
 
-  return { apiUrl, apiKey, topList, ccUrl, fetchMultipleSymbolsPrice, fetchTotalTopTierVolFull }
-})
-
-export type MultipleSymbolsPriceParams = {
   /**
-   * Comma separated cryptocurrency symbols list
+   * 熱門
    */
-  fsyms: string
+  const topVolumeList = computed(() => {
+    return [...topList.value].sort((a, b) => b.RAW.USD.VOLUME24HOUR - a.RAW.USD.VOLUME24HOUR)
+  })
+
   /**
-   * Comma separated cryptocurrency symbols list to convert into
-   *
-   * ex: USD,EUR,CNY
+   * 漲幅榜
    */
-  tsyms?: string
-}
+  const topChangedPercentList = computed(() => {
+    return [...topList.value].sort((a, b) => b.RAW.USD.CHANGEPCT24HOUR - a.RAW.USD.CHANGEPCT24HOUR)
+  })
 
-export type TotalTopTierVolFullParams = {
   /**
-   * The currency symbol to convert into
-   *
-   * ex: USD
+   * 跌幅榜
    */
-  tsym?: string
+  const topMinusChangedPercentList = computed(() => {
+    return [...topList.value].sort((a, b) => a.RAW.USD.CHANGEPCT24HOUR - b.RAW.USD.CHANGEPCT24HOUR)
+  })
+
   /**
-   * The number of coins to return in the top list, default 10, min 10, max 100 will round to steps of 10 coins
+   * 新幣上線
    */
-  limit?: number
-}
+  const topLatestLaunchList = computed(() => {
+    return [...topList.value].sort(
+      (a, b) =>
+        new Date(b.CoinInfo.AssetLaunchDate).getTime() -
+        new Date(a.CoinInfo.AssetLaunchDate).getTime()
+    )
+  })
 
-export type CoinInfo = {
-  Id: string
-  Name: string
-  ImageUrl: string
-}
-
-export type CoinRawInfo = {
-  PRICE: number
-  CHANGEPCT24HOUR: number
-  HIGHDAY: number
-  LOWDAY: number
-  VOLUME24HOUR: number
-}
-
-export type TotalTopTierVolFullResponseData = {
-  CoinInfo: CoinInfo
-  RAW: {
-    [key: string]: CoinRawInfo
+  return {
+    apiUrl,
+    apiKey,
+    topList,
+    ccUrl,
+    fetchMultipleSymbolsPrice,
+    fetchTotalTopTierVolFull,
+    topVolumeList,
+    topChangedPercentList,
+    topMinusChangedPercentList,
+    topLatestLaunchList,
   }
-}
-
-export type TotalTopTierVolFullResponse = {
-  Data: TotalTopTierVolFullResponseData[]
-}
+})
