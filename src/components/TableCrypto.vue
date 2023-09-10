@@ -7,9 +7,10 @@
             <component
               :is="i === 0 ? 'th' : 'td'"
               class="font-normal text-primary-content"
-              :class="{ 'text-left': i === 0 }"
+              :class="{ 'text-left ': i === 0 }"
             >
               {{ x.label }}
+              <span v-if="i === 0" class="block w-[30vw]"></span>
             </component>
           </template>
         </tr>
@@ -27,11 +28,21 @@
                 <span class="font-bold">{{ x.CoinInfo.Name }}</span>
               </div>
             </th>
-            <td>{{ x.RAW.USD.PRICE }}</td>
-            <td>{{ x.RAW.USD.CHANGEPCT24HOUR }}</td>
-            <td>{{ x.RAW.USD.CHANGEPCT24HOUR }}</td>
-            <td>{{ x.RAW.USD.CHANGEPCT24HOUR }}</td>
-            <td>{{ x.RAW.USD.CHANGEPCT24HOUR }}</td>
+            <td>
+              <BadgeNumberNotice :value="x.RAW.USD.PRICE" :show-notify-color="false" />
+            </td>
+            <td>
+              <BadgeNumberNotice
+                :value="x.RAW.USD.CHANGEPCT24HOUR"
+                :show-plus-sign="true"
+                suffix-label="%"
+              />
+            </td>
+            <td><BadgeNumberNotice :value="x.RAW.USD.HIGHDAY" :show-notify-color="false" /></td>
+            <td><BadgeNumberNotice :value="x.RAW.USD.LOWDAY" :show-notify-color="false" /></td>
+            <td>
+              <BadgeNumberNotice :value="x.RAW.USD.VOLUME24HOUR" :show-notify-color="false" />
+            </td>
           </tr>
         </template>
       </tbody>
@@ -41,6 +52,7 @@
 
 <script setup lang="ts">
 import { useCryptoCompareStore } from "@/stores/cryptoCompare"
+import BadgeNumberNotice from "@/components/BadgeNumberNotice.vue"
 
 const ccStore = useCryptoCompareStore()
 
