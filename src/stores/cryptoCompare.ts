@@ -5,6 +5,9 @@ import { createFetch } from "@vueuse/core"
 export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
   const apiUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_URL)
   const apiKey = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_KEY)
+  const ccUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_URL)
+
+  const topList = ref<TotalTopTierVolFullResponseData[]>()
 
   const apiFetch = createFetch({
     baseUrl: apiUrl.value,
@@ -24,13 +27,12 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
    * Get the current price of any cryptocurrency in any other currency that you need.
    */
   const fetchMultipleSymbolsPrice = async (params: MultipleSymbolsPriceParams) => {
-    console.log(params)
     const { tsyms = "USD,EUR,CNY", fsyms } = params
 
     const endpoint = "/pricemulti"
     const searchParams = new URLSearchParams({ tsyms, fsyms }).toString()
 
-    const { data } = await apiFetch(`${endpoint}?${searchParams}`)
+    const { data } = await apiFetch(`${endpoint}?${searchParams}`).json()
 
     return data
   }
@@ -47,12 +49,16 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
     const endpoint = "/top/totaltoptiervolfull"
     const searchParams = new URLSearchParams({ tsym, limit: limit.toString() }).toString()
 
-    const { data } = await apiFetch(`${endpoint}?${searchParams}`)
+    const { data } = await apiFetch<TotalTopTierVolFullResponse>(
+      `${endpoint}?${searchParams}`
+    ).json()
+
+    topList.value = data.value.Data
 
     return data
   }
 
-  return { apiUrl, apiKey, fetchMultipleSymbolsPrice, fetchTotalTopTierVolFull }
+  return { apiUrl, apiKey, topList, ccUrl, fetchMultipleSymbolsPrice, fetchTotalTopTierVolFull }
 })
 
 export type MultipleSymbolsPriceParams = {
@@ -79,4 +85,29 @@ export type TotalTopTierVolFullParams = {
    * The number of coins to return in the top list, default 10, min 10, max 100 will round to steps of 10 coins
    */
   limit?: number
+}
+
+export type CoinInfo = {
+  Id: string
+  Name: string
+  ImageUrl: string
+}
+
+export type CoinRawInfo = {
+  PRICE: number
+  CHANGEPCT24HOUR: number
+  HIGHDAY: number
+  LOWDAY: number
+  VOLUME24HOUR: number
+}
+
+export type TotalTopTierVolFullResponseData = {
+  CoinInfo: CoinInfo
+  RAW: {
+    [key: string]: CoinRawInfo
+  }
+}
+
+export type TotalTopTierVolFullResponse = {
+  Data: TotalTopTierVolFullResponseData[]
 }
