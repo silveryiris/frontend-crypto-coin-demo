@@ -1,17 +1,18 @@
 <template>
   <div class="container mx-auto px-2">
-    <Transition>
-      <div v-show="isDisplayCoinList === true">
-        <TabCrypto @change="handleTabChange"></TabCrypto>
-        <TableCrypto @view-detail="handleViewDetail" :rows="tableData"></TableCrypto>
-      </div>
-    </Transition>
-    <Transition>
+    <Transition name="slide-out">
       <CoinDetail
         @close="isDisplayCoinList = true"
         :is-display="!isDisplayCoinList"
         :coin-data="coinData"
       ></CoinDetail>
+    </Transition>
+
+    <Transition name="slide-in">
+      <div v-show="isDisplayCoinList === true">
+        <TabCrypto @change="handleTabChange"></TabCrypto>
+        <TableCrypto @view-detail="handleViewDetail" :rows="tableData"></TableCrypto>
+      </div>
     </Transition>
   </div>
 </template>
@@ -73,13 +74,28 @@ const tableData = computed(() => {
 </script>
 
 <style scoped>
-.v-enter-active,
-.v-leave-active {
-  transition: opacity 0.25s ease-out;
+.slide-in-enter-active {
+  transition: transform 0.25s ease;
 }
 
-.v-enter-from,
-.v-leave-to {
+.slide-in-enter-from {
+  opacity: 0;
+  transform: translateX(-100px);
+}
+
+.slide-in-leave-to {
+  opacity: 0;
+}
+
+.slide-out-enter-active {
+  transition: transform 0.25s ease;
+}
+
+.slide-out-enter-from {
+  opacity: 0;
+  transform: translateX(100px);
+}
+.slide-out-leave-to {
   opacity: 0;
 }
 </style>
