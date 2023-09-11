@@ -17,3 +17,16 @@ export const padLeadZero = (value: string | number, digit = 2) => {
 
   return `${numberSign}${paddedStart}.${end}`
 }
+
+export const formatLocaleNumber = (
+  number: number | bigint,
+  options = {} as { locale: string; maximumFractionDigits: number }
+) => {
+  const { locale = "zh-TW", maximumFractionDigits = 2 } = options
+
+  return new Intl.NumberFormat(locale, { maximumFractionDigits }).format(number)
+}
+
+export const formatNumber = (value: number, digit = 2) => {
+  return value.toFixed(digit)
+}

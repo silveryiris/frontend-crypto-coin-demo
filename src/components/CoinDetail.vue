@@ -18,7 +18,9 @@
         </div>
         <div>
           <div class="mb-1 whitespace-nowrap">24h成交量(USDT)</div>
-          <div class="text-primary-content">{{ formatNumber(coinData.volume24Hour) }}</div>
+          <div class="text-primary-content">
+            {{ formatLocaleNumber(coinData.volume24Hour / 10000) }} 萬
+          </div>
         </div>
       </div>
     </div>
@@ -35,6 +37,7 @@
 import { toRefs, ref, type PropType } from "vue"
 import { ArrowLeftIcon, BookOpenIcon } from "@heroicons/vue/24/solid"
 import CoinDetailModal from "@/components/CoinDetailModal.vue"
+import { formatNumber, formatLocaleNumber } from "@/composables/number"
 
 const emit = defineEmits(["close"])
 
@@ -46,12 +49,6 @@ const props = defineProps({
 const { isDisplay, coinData } = toRefs(props)
 
 const isOpenModal = ref(false)
-
-const formatNumber = (value: number) => {
-  const label = value.toFixed(2)
-
-  return label
-}
 
 export type CoinData = {
   name: string
