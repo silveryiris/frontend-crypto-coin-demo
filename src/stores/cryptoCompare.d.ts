@@ -39,6 +39,12 @@ export type CoinRawInfo = {
   VOLUME24HOUR: number
 }
 
+export type MultipleSymbolsPriceResponse = {
+  [key: string]: {
+    [key: string]: number
+  }
+}
+
 export type TotalTopTierVolFullResponseData = {
   CoinInfo: CoinInfo
   RAW: {

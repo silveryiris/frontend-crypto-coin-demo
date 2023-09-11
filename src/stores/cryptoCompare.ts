@@ -4,6 +4,7 @@ import { createFetch } from "@vueuse/core"
 import type {
   TotalTopTierVolFullResponseData,
   MultipleSymbolsPriceParams,
+  MultipleSymbolsPriceResponse,
   TotalTopTierVolFullParams,
   TotalTopTierVolFullResponse,
 } from "./cryptoCompare.d"
@@ -12,6 +13,8 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
   const apiUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_URL)
   const apiKey = ref(import.meta.env.VITE_CRYPTOCOMPARE_API_KEY)
   const ccUrl = ref(import.meta.env.VITE_CRYPTOCOMPARE_URL)
+
+  const exchangeCurrencyList = ref(["USD", "EUR", "CNY"])
 
   const topList = ref<TotalTopTierVolFullResponseData[]>([])
 
@@ -33,12 +36,16 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
    * Get the current price of any cryptocurrency in any other currency that you need.
    */
   const fetchMultipleSymbolsPrice = async (params: MultipleSymbolsPriceParams) => {
-    const { tsyms = "USD,EUR,CNY", fsyms } = params
+    const defaultTsyms = exchangeCurrencyList.value.join(",")
+
+    const { tsyms = defaultTsyms, fsyms } = params
 
     const endpoint = "/pricemulti"
     const searchParams = new URLSearchParams({ tsyms, fsyms }).toString()
 
-    const { data } = await apiFetch(`${endpoint}?${searchParams}`).json()
+    const { data } = await apiFetch<MultipleSymbolsPriceResponse>(
+      `${endpoint}?${searchParams}`
+    ).json()
 
     return data
   }
@@ -101,6 +108,7 @@ export const useCryptoCompareStore = defineStore("cryptoCompare", () => {
     apiKey,
     topList,
     ccUrl,
+    exchangeCurrencyList,
     fetchMultipleSymbolsPrice,
     fetchTotalTopTierVolFull,
     topVolumeList,
