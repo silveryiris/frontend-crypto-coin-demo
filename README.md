@@ -1,4 +1,4 @@
-# unimall-frontend
+# frontend-crypto-coin-demo
 
 ## Project Setup
 

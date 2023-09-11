@@ -17,7 +17,7 @@
       </thead>
       <tbody>
         <template v-for="x in rows" :key="x">
-          <tr class="text-right text-primary-content">
+          <tr @click="showCoinDetail(x)" class="text-right text-primary-content">
             <th class="text-left">
               <div class="mr-4 flex items-center">
                 <img
@@ -57,6 +57,8 @@ import { useCryptoCompareStore } from "@/stores/cryptoCompare"
 import type { TotalTopTierVolFullResponseData } from "@/stores/cryptoCompare.d"
 import BadgeNumberNotice from "@/components/BadgeNumberNotice.vue"
 
+const emit = defineEmits(["viewDetail"])
+
 const props = defineProps({ rows: { type: Array as PropType<TotalTopTierVolFullResponseData[]> } })
 
 const { rows } = toRefs(props)
@@ -71,4 +73,8 @@ const tableHeaders = [
   { label: "24h最低" },
   { label: "24h成交量(USDT)" },
 ]
+
+const showCoinDetail = (data: TotalTopTierVolFullResponseData) => {
+  emit("viewDetail", data)
+}
 </script>

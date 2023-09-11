@@ -25,7 +25,7 @@ const tabHeaders = [
   { label: "跌幅榜", id: "fall" },
 ]
 
-const activeTabId = ref("")
+const activeTabId = ref("custom")
 
 const activeTab = (index = 0) => {
   const target = tabHeaders[index]

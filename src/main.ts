@@ -13,7 +13,7 @@ app.use(router)
 
 // dev mock api server
 const prepare = async () => {
-  if (import.meta.env.DEV === true) {
+  if (import.meta.env.DEV === true && import.meta.env.VITE_ENABLE_DEV_MSW === "enabled") {
     const module = await import("@/mocks/cryptocompare/browser")
 
     const { worker } = module
