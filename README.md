@@ -23,8 +23,10 @@ VITE_ENABLE_DEV_MSW = enabled
 
 ## Preview
 
-<img src="public/demo/demo1.png" width="300px" />
-<img src="public/demo/demo2.png" width="300px" />
+<p align="center" width="100%">
+    <img src="public/demo/demo1.png" width="300px" />
+    <img src="public/demo/demo2.png" width="300px" />
+</p>
 
 ## Project Setup
 
