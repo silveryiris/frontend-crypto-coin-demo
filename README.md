@@ -21,6 +21,13 @@ VITE_ENABLE_DEV_MSW = enabled
 
 本地開發可以新建`.env.local`來修改環境參數，讀取優先權高於`.env`
 
+## Preview
+
+<p align="center" width="100%">
+    <img src="public/demo/demo1.png" width="300px" />
+    <img src="public/demo/demo2.png" width="300px" />
+</p>
+
 ## Project Setup
 
 ```sh
